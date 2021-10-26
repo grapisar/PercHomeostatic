@@ -1,6 +1,6 @@
 from deg_analytic_func import *
 from deg_numeric_func import *
-from gwcc_conf_func import *
+#from gwcc_conf_func import *
 import numpy as np
 import matplotlib.pyplot as plt
 from sys import argv
@@ -9,69 +9,11 @@ import time
 import seaborn as sns
 from progress.bar import Bar
 
-# dkmax = 7 #magic number with mouse dataset
-
-# ###NETWORK CONFIGURATION##
-
-#N = 5000
-
 ins = argv[1]
 dist = argv[2]
 SAMPLES = int(argv[3])
 outstring = argv[4]
-#top  = argv[5]
-#a = float(argv[6])
-
-# 	##ER GRAPH##
-# if(top == 'er'):
-#     z = a
-#     sout  = np.random.poisson(z, N)
-#     d_out = sout.astype(int)
-#     d_in = d_out
-
-#     G = nx.directed_configuration_model(d_in,d_out)
-#     G = nx.DiGraph(G)
-#     G.remove_edges_from(nx.selfloop_edges(G))
-
-#     savenet(G,'er.txt')
-	
-
-	
-# 	##RG GRAPH##
-# if(top == 'rg'):
-#     z = int(a)
-#     d_out = [z]*N
-#     d_in = d_out
-
-#     G = nx.directed_configuration_model(d_in,d_out)
-#     G = nx.DiGraph(G)
-#     G.remove_edges_from(nx.selfloop_edges(G))
-
-#     savenet(G,'rg.txt')
-
-
-# 	##SF GRAPH ##
-# if(top == 'sf'):
-#     delta, m = a-1, 1.  # shape and mode
-#     sout = (np.random.pareto(delta, N) + 1) * m
-#     d_out = sout.astype(int)
-#     d_in = d_out
-
-#     G = nx.directed_configuration_model(d_in,d_out)
-#     G = nx.DiGraph(G)
-#     G.remove_edges_from(nx.selfloop_edges(G))
-
-#     savenet(G,'sf.txt')
-
-	
-	
-# if(top == 'input'):
-#     instring = ins
-#     UG = nx.read_edgelist(instring)
-#     X = nx.to_directed(UG)
-#     G = max((X.subgraph(c).copy() for c in nx.weakly_connected_components(X)), key=len)
-
-#     savenet(G,'mouse.txt')
+plot = argv[5]
 
 G = nx.read_edgelist(ins,create_using=nx.DiGraph())
 		 		
@@ -82,13 +24,11 @@ print('N =',N)
 assign_weights(G,dist)
 G_noad = G.copy()
 
-	#DEFINITION OF W and K domains#
-
 TOLLK = 1e-12
 
-#w_max = max_out_strength(G)
-#print(w_max)
-w_max = 6
+#DEFINITION OF W and K domains#
+
+w_max = 3
 
 dw = w_max / SAMPLES
 k_max = max_out_deg(G) + 1
@@ -96,7 +36,7 @@ ww = np.arange(0,w_max,dw)
 kk = np.arange(0,k_max,1)
 print('Max deg =', (k_max-1))
 
-	#INITIAL DEGREE DISTRIBUTION#
+#INITIAL DEGREE DISTRIBUTION#
 k_list = list([G.out_degree(n) for n in G.nodes()])
 pk = [k_list.count(i)/len(k_list) for i in kk]
 pk0out = pk
@@ -107,19 +47,19 @@ pk0in = pk_in
 
 U = np.outer(pk,pk_in)
 
-	#INITIAL WEIGHT DISTRIBUTION#
+#INITIAL WEIGHT DISTRIBUTION#
 if(dist == 'uniform'):
 	pw = np.heaviside(ww,1)*np.heaviside(1-ww,1)
 if(dist == 'gauss'):
 	pw = norm(gaussian(ww,0.5,0.1),dw)
 
-	#INITIAL MEAN DEGREE#	
+#INITIAL MEAN DEGREE#	
 meank = mean_k(pk)
 
-	#INITIAL EXCESS DEGREE DISTRIBUTION#
+#INITIAL EXCESS DEGREE DISTRIBUTION#
 pkex = PFK_EX(pk,kk)
 
-	#INITIAL JOINT W, EXCESS K DEGREE DISTRIBUTION#
+#INITIAL JOINT W, EXCESS K DEGREE DISTRIBUTION#
 
 pwk = []
 for k in range(1,len(kk)):
@@ -198,20 +138,28 @@ OUT.append(WW_ad)
 OUT.append(ff)
 OUT.append(ww)
 
-#OUT = np.array(OUT,dtype='object')
-#np.save(outstring,OUT)
+OUT = np.array(OUT,dtype='object')
+np.save(outstring,OUT)
 
-for i in range(0,len(PW_noad_T)):
-    plt.figure()
-    plt.hist(WW_noad[i],bins=int(np.sqrt(len(WW_noad[i]))),density=True)
-    plt.plot(ww,PW_noad_T[i])
-    plt.show()
-    plt.close()
+if plot == 'PLOT' :
+    for i in range(0,len(PW_noad_T)):
+        plt.figure()
+        plt.hist(WW_noad[i],bins=int(np.sqrt(len(WW_noad[i]))),density=True)
+        plt.title(r'$y = %.3f$ No Response' % ff[i])
+        plt.xlabel(r'$x$')
+        plt.ylabel(r'$w(x)$')
+        plt.xlabel('x')
+        plt.plot(ww,PW_noad_T[i])
+        plt.show()
+        plt.close()
 
-for i in range(0,len(PW_ad_T)):
-    plt.figure()
-    plt.hist(WW_ad[i],bins=int(np.sqrt(len(WW_ad[i]))),density=True)
-    plt.plot(ww,PW_ad_T[i])
-    plt.show()
-    plt.close()
+    for i in range(0,len(PW_ad_T)):
+        plt.figure()
+        plt.hist(WW_ad[i],bins=int(np.sqrt(len(WW_ad[i]))),density=True)
+        plt.title(r'$y = %.3f$ Homeostatic Response' % ff[i])
+        plt.xlabel(r'$x$')
+        plt.ylabel(r'$w(x)$')
+        plt.plot(ww,PW_ad_T[i])
+        plt.show()
+        plt.close()
 

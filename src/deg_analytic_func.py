@@ -1,13 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.special import factorial, binom
 from numpy.fft import fft,ifft
-
-#def integ(arr,df):
-#	sum = 0
-#	for i in range(0,len(arr)):
-#		sum += arr[i]*df
-#	return sum
 
 def integ(arr,df):
 	return np.sum(arr)*df
@@ -18,53 +11,25 @@ def primitive(arr,ww,dw):
 		out.append(integ(arr*np.heaviside(t-ww,1),dw))
 	return np.array(out)
 	
-def dirac(xx,m,dw):		#delta(x-m)
-	out = [0]*len(xx)
-	out = np.array(out)
-	out[int(m/dw)] = 1/dw
-	return out
-	
-def dirac_gauss(xx,m,dw):
-	return norm(gaussian(xx,m,1e-12),dw)
-
-	
-# def scalex(arr,fac):
-# 	scaled = [0]*len(arr)
-# 	for i in range(0,len(arr)):
-# 		if(int(fac*i) < len(arr)):
-# 			scaled[i] = arr[int(fac*i)]
-# 	return scaled
+def norm(arr,dw):
+	if(integ(arr,dw) != 0):
+		return arr/integ(arr,dw)
+	if(integ(arr,dw) == 0):
+		return arr
 
 def scalex(arr,fac):
 	split = arr[::int(fac)]
 	add = np.zeros(len(arr)-len(split))
 	return np.concatenate((split,add))
 
-
-def kron_delta(arr,b):
-	out = []
-	for a in arr:
-		d = 0
-		if(a == b):
-			d = 1
-		out.append(d)
-	return np.array(out)
-	
 def gaussian(x, mu, sig):
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
     
 	
-def conv_norm(a,b,n,df):		#convoluzione di a*b**n
+def conv_norm(a,b,n,df):		#convolution of a*b**n
 	fa = fft(a)
 	fb = (fft(b)*df)**n
 	return np.real(ifft(fa*fb))
-
-	
-def norm(arr,dw):
-	if(integ(arr,dw) != 0):
-		return arr/integ(arr,dw)
-	if(integ(arr,dw) == 0):
-		return arr
 
 def mean_k(pk):
 	s = 0
@@ -139,64 +104,6 @@ def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,alpha):
 			
 	return np.array(out)
 	
-def PFKEX_APPROX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,alpha,dkmax):
-	out = []
-	for k in range(1,len(kpred)):
-#		print(k)
-		s = 0
-		km =  len(kk)
-		if(k < len(kk) - dkmax):
-			km = k + dkmax + 1
-		for j in range(k,km):
-			a_k = norm(wkpred[j-1],dw)
-			a = integ(a_k*np.heaviside(ww-f,1),dw)
-
-			wpred_up = wkpred[j-1]*np.heaviside(ww-f,1)
-			wpred_up_norm = norm(wpred_up,dw)
-			wpredk_down = scalex(wkpred[j-1],k/alpha)*np.heaviside(f - (k*ww)/alpha,1)
-			wpredk_down_norm = norm(wpredk_down,dw)
-
-			conv_ = conv_norm(wpred_up,wpredk_down,(j-k),dw)
-			conv = norm(conv_,dw)
-			
-			#PREVENTS DIVERGENCES DUE TO NUMERICAL INSTABILITIES
-			if(np.sum(conv > 1e6) != 0):
-				conv[conv > 1e6] = 0
-
-			s += binom(j,k)*(a**k)*((1-a)**(j-k))*kpred[j]*conv		
-
-		out.append(s*k)
-	if(multi == 1):
-		if(len(out) > 1):
-			while True:
-				a = np.array(out[-1])
-				p = integ(a,dw)
-				if(p > TOLLK):
-					break
-				else:
-					del out[-1]
-			
-	return np.array(out)
-	
-def PFK_NOAD(pk0,f,kk,pw0,ww,dw,TOLLK):
-	out = []
-	a = integ(pw0*np.heaviside(ww-f,1),dw)
-	for k in range(0,len(pk0)):
-#		print(k)
-		s = 0
-		for j in range(k,len(pk0)):			
-			s += binom(j,k)*(a**k)*((1-a)**(j-k))*pk0[j]
-			
-		out.append(s)
-	if(len(out) > 1):
-		while True:
-			a = np.array(out[-1])
-			if(a > TOLLK):
-				break
-			else:
-				del out[-1]
-	
-	return np.array(out)
 	
 def PFK_EX(pfk,kk):
 	out = []

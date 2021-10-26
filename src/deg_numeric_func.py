@@ -1,15 +1,7 @@
 import networkx as nx
 import numpy as np
-import matplotlib.pyplot as plt
 import random
 import copy
-
-# def out_strength(G,n):
-# 	eout = G.out_edges(n)
-# 	s = 0
-# 	for e in eout:
-# 		s += G[e[0]][e[1]]['weight']
-# 	return s
 
 def in_strength(G,n):
 	eout = G.in_edges(n)
@@ -17,14 +9,6 @@ def in_strength(G,n):
 	for e in eout:
 		s += G[e[0]][e[1]]['weight']
 	return s	
-
-# def max_out_strength(G):
-# 	max = 0
-# 	for n in G.nodes():
-# 		s = out_strength(G,n)
-# 		if(s > max):
-# 			max = s
-# 	return max
 
 def w_k_corr(G):
 	w_out = []
@@ -74,40 +58,6 @@ def max_out_deg(G):
 def min_max_out_weight(G):
 	w = [G[e[0]][e[1]]['weight'] for e in G.edges()]
 	return min(w), max(w)
-			
-def rand_dir_conf_model(d_in,d_out,dist):
-
-	G = nx.directed_configuration_model(d_in,d_out)
-	G = nx.DiGraph(G)
-	G.remove_edges_from(nx.selfloop_edges(G))
-
-	for e in G.edges():
-		x = random.random()
-		y = random.normalvariate(0.5,0.1)
-
-		if(dist == 'uniform'):
-			G[e[0]][e[1]]['weight'] = x
-		if(dist == 'gauss'):
-			G[e[0]][e[1]]['weight'] = y
-		if(dist == 'bigauss'):
-			x1 = random.normalvariate(0.2,0.05)
-			x2 = random.normalvariate(0.6,0.05)
-			z = random.random()
-			if(z < 0.5):
-				G[e[0]][e[1]]['weight'] = x1
-			if(z > 0.5):
-				G[e[0]][e[1]]['weight'] = x2
-		if(dist == 'exp'):
-			z = random.expovariate(0.1)
-			G[e[0]][e[1]]['weight'] = z
-		if(dist == 'trunc_gauss'):
-			while True:
-				y = random.normalvariate(0,0.1)
-				if(y > 0):
-					break
-			G[e[0]][e[1]]['weight'] = y
-		
-	return G
 
 def assign_weights(G,dist):
 	for e in G.edges():
@@ -117,23 +67,6 @@ def assign_weights(G,dist):
 		if(dist == 'uniform'):
 			G[e[0]][e[1]]['weight'] = x
 		if(dist == 'gauss'):
-			G[e[0]][e[1]]['weight'] = y
-		if(dist == 'bigauss'):
-			x1 = random.normalvariate(0.2,0.05)
-			x2 = random.normalvariate(0.6,0.05)
-			z = random.random()
-			if(z < 0.5):
-				G[e[0]][e[1]]['weight'] = x1
-			if(z > 0.5):
-				G[e[0]][e[1]]['weight'] = x2
-		if(dist == 'exp'):
-			z = random.expovariate(0.1)
-			G[e[0]][e[1]]['weight'] = z
-		if(dist == 'trunc_gauss'):
-			while True:
-				y = random.normalvariate(0,0.1)
-				if(y > 0):
-					break
 			G[e[0]][e[1]]['weight'] = y
 
 	
@@ -182,34 +115,7 @@ def remove_thresh_scale(G,f,a):
 		for m in nn_new:
 			G[n][m]['weight'] *= (S - (1-a)*Delta)/(S - Delta)
 
-def assign_weights(G,dist):
-	for e in G.edges():
-		x = random.random()
-		y = random.normalvariate(0.5,0.1)
-
-		if(dist == 'uniform'):
-			G[e[0]][e[1]]['weight'] = x
-		if(dist == 'gauss'):
-			G[e[0]][e[1]]['weight'] = y
-		if(dist == 'bigauss'):
-			x1 = random.normalvariate(0.2,0.05)
-			x2 = random.normalvariate(0.6,0.05)
-			z = random.random()
-			if(z < 0.5):
-				G[e[0]][e[1]]['weight'] = x1
-			if(z > 0.5):
-				G[e[0]][e[1]]['weight'] = x2
-		if(dist == 'exp'):
-			z = random.expovariate(0.1)
-			G[e[0]][e[1]]['weight'] = z
-		if(dist == 'trunc_gauss'):
-			while True:
-				y = random.normalvariate(0,0.3)
-				if(y > 0):
-					break
-			G[e[0]][e[1]]['weight'] = y
 		
-			
 def w_w(G):
 	a = []
 	w1 = []
@@ -242,13 +148,7 @@ def WCC(G):
 	N = nx.number_of_nodes(G)
 	out = [len(c)/N for c in sorted(nx.weakly_connected_components(G),key=len, reverse=True)]
 	return out
-
-def derivative(arr,dw):
-	out = []
-	for i in range(1,len(arr)):
-		out.append((arr[i] - arr[i-1])/dw)
-	return out		
-
+	
 def savenet(G,outstring):
 	nx.write_weighted_edgelist(G,outstring)	
 		
