@@ -1,6 +1,5 @@
 from deg_analytic_func import *
 from deg_numeric_func import *
-#from gwcc_conf_func import *
 import numpy as np
 import matplotlib.pyplot as plt
 from sys import argv
