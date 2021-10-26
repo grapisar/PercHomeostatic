@@ -4,7 +4,7 @@ Code to reproduce the findings on percolation in networks equipped with local ho
 
 ## Single Instance
 
-`example_single.py` runs a single instance of the damage-removal process on a given directed network.
+`example_single.py` runs a single instance of the damage-response process on a given directed network.
 The syntax is:
 
 ``` python
