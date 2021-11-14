@@ -28,4 +28,4 @@ def input_params():
             print(e2)
             check = False
 
-    return [ins,dist,SAMPLES,outstring,plot,check]
+    return ins,dist,SAMPLES,outstring,plot,check
