@@ -2,14 +2,14 @@
 
 Code to reproduce the findings of the paper *"Percolation in networks equipped with local homeostatic plasticity"*.
 
-## Single Instance
+## Example of successive instances
 
-`example_simple.py` runs three successive instances of the damage-response process on a given directed network. The default setting reproduces the findings shown in Fig.2, but on a smaller network, which is a N=5k nodes Random Regular graph with degree k=4.
+`FIG2.py` runs three successive instances of the damage-response process on a given directed network. 
 
 The syntax is:
 
 ``` python
-python3 example_single.py [path_edgelist] [weight_distribution] [samples] [outstring] [show_plot]
+python3 FIG2.py [path_edgelist] [weight_distribution] [samples] [outstring] [show_plot]
 ```
 
 where:
@@ -24,8 +24,10 @@ where:
 
 * `Plot`: `plot` for visualizing the result of the simulation, `noplot` otherwise.
 
-### Example
+To reproduce the results shown in Figure 2 run:
 
 ``` python
-python3 example_single.py RG_N5000_k4.txt gauss 10000 out plot
+python3 FIG2.py datasets/RG_N5000_k4.txt gauss 10000 out_fig2 plot
 ```
+
+`RG_N5000_k4.txt` has the same topology of the network used in Figure 2 in the paper, but the size is 5k nodes instead of 50k.
