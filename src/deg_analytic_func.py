@@ -68,8 +68,9 @@ def exp_wk(pwk,ww,kk,dw):
 		s += pwk[k-1]*k
 	return integ(s*ww,dw)	
 
-def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,alpha):
+def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi):
 	out = []
+	check = 0
 	for k in range(1,len(kpred)):
 		#print(k)
 		s = 0
@@ -78,18 +79,59 @@ def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,alpha):
 			a = integ(a_k*np.heaviside(ww-f,1),dw)
 
 			wpred_up = wkpred[j-1]*np.heaviside(ww-f,1)
-			wpred_up_norm = norm(wpred_up,dw)
-			wpredk_down = scalex(wkpred[j-1],k/alpha)*np.heaviside(f - (k*ww)/alpha,1)
-			wpredk_down_norm = norm(wpredk_down,dw)
+			wpredk_down = scalex(wkpred[j-1],k)*np.heaviside(f - (k*ww),1)
 
 			conv_ = conv_norm(wpred_up,wpredk_down,(j-k),dw)
-			conv = norm(conv_,dw)
-			
-			#PREVENTS DIVERGENCES DUE TO NUMERICAL INSTABILITIES
-			if(np.sum(conv > 1e6) != 0):
-				conv[conv > 1e6] = 0
 
-			s += binom(j,k)*(a**k)*((1-a)**(j-k))*kpred[j]*conv			
+			#PREVENTS DIVERGENCES DUE TO NUMERICAL INSTABILITIES
+			if(np.sum(conv_ > 1e6) != 0):
+				conv_[conv_ > 1e6] = 0
+			if(np.sum(conv_ < 0) != 0):
+				conv_[conv_ < 0] = 0
+
+			conv = norm(conv_,dw)
+
+			s += binom(j,k)*(a**k)*((1-a)**(j-k))*kpred[j]*conv		
+
+		out.append(s*k)
+	if(multi == 1):
+		if(len(out) > 1):
+			while True:
+				a = np.array(out[-1])
+				p = integ(a,dw)
+				if(p > TOLLK):
+					break
+				else:
+					del out[-1]
+			
+	return np.array(out)
+
+def PFKEX_APPROX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,dkmax):
+	out = []
+	for k in range(1,len(kpred)):
+#		print(k)
+		s = 0
+		km =  len(kk)
+		if(k < len(kk) - dkmax):
+			km = k + dkmax + 1
+		for j in range(k,km):
+			a_k = norm(wkpred[j-1],dw)
+			a = integ(a_k*np.heaviside(ww-f,1),dw)
+
+			wpred_up = wkpred[j-1]*np.heaviside(ww-f,1)
+			wpredk_down = scalex(wkpred[j-1],k)*np.heaviside(f - (k*ww),1)
+
+			conv_ = conv_norm(wpred_up,wpredk_down,(j-k),dw)
+
+			#PREVENTS DIVERGENCES DUE TO NUMERICAL INSTABILITIES
+			if(np.sum(conv_ > 1e6) != 0):
+				conv_[conv_ > 1e6] = 0
+			if(np.sum(conv_ < 0) != 0):
+				conv_[conv_ < 0] = 0
+
+			conv = norm(conv_,dw)
+
+			s += binom(j,k)*(a**k)*((1-a)**(j-k))*kpred[j]*norm(conv,dw)		
 
 		out.append(s*k)
 	if(multi == 1):
