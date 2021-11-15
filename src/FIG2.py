@@ -11,7 +11,8 @@ def main():
     if(check): 
         
         TOLLK = 1e-12
-        yy = [0,0.25,0.50,0.75]
+        #yy = [0,0.25,0.50,0.75]
+        yy = np.linspace(0,0.9,10)
 
         adaptive_deg = AdaptiveDegradation(ins,dist,SAMPLES,outstring,plot,TOLLK)
 
@@ -45,7 +46,7 @@ def main():
                 plt.title(r'$y = %.3f$ No Response' % yy[i])
                 plt.xlabel(r'$x$')
                 plt.ylabel(r'$w(x)$')
-                plt.xlabel('x')
+                plt.xlim(0,10)
                 plt.plot(ww,PW_noad_T[i])
                 plt.show()
                 plt.close()
@@ -56,6 +57,7 @@ def main():
                 plt.title(r'$y = %.3f$ Homeostatic Response' % yy[i])
                 plt.xlabel(r'$x$')
                 plt.ylabel(r'$w(x)$')
+                plt.xlim(0,10)
                 plt.plot(ww,PW_ad_T[i])
                 plt.show()
                 plt.close()
