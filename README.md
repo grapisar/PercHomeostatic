@@ -27,7 +27,7 @@ where:
 To reproduce the results shown in Figure 2 run:
 
 ``` python
-python3 FIG2.py datasets/RG_N5000_k4.txt gauss 10000 out_fig2 plot
+python3 FIG2.py datasets/RG_N5000_k4.txt gauss 5000 out_fig2 plot
 ```
 
 `RG_N5000_k4.txt` has the same topology of the network used in Figure 2 in the paper, but the size is 5k nodes instead of 50k.
