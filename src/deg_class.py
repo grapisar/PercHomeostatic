@@ -1,7 +1,9 @@
 from deg_analytic_func import *
 from deg_numeric_func import *
+from gwcc_conf_func import *
 import numpy as np
 from progress.bar import Bar
+import time
 
 class AdaptiveDegradation:
     def __init__(self,ins,dist,SAMPLES,outstring,plot,TOLLK):
@@ -127,5 +129,6 @@ class AdaptiveDegradation:
                 WW_ad.append(w_list)
 
                 bar.next()
+
 
         return PW_ad_T,WW_ad
