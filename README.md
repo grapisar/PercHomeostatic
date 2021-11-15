@@ -4,7 +4,7 @@ Code to reproduce the main findings of the paper *"Percolation in networks equip
 
 ## Example of successive instances
 
-`FIG2.py` runs three successive instances of the damage-response process on a given directed network. 
+`FIG2.py` runs 3 successive instances of the damage-response process on a given directed network. 
 
 The syntax is:
 
@@ -31,3 +31,15 @@ python3 FIG2.py datasets/RG_N5000_k4.txt gauss 10000 out_fig2 plot
 ```
 
 `RG_N5000_k4.txt` has the same topology of the network used in Figure 2 in the paper, but the size is 5k nodes instead of 50k.
+
+## Evolution of the Weak Largest Connected Component
+
+`FIG3.py` runs 20 successive instances of both the damage process only and the damage-response process on a given directed network and returns the evolution of the weak largest connected component for the two cases. 
+
+Syntax and input parameters are exactly the same of `FIG2.py`.
+
+To reproduce the results shown in Figure 3b run:
+
+``` python
+python3 FIG3.py datasets/mouse_kasthuri_directed.txt uniform 5000 out_fig3 plot
+```
