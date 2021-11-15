@@ -11,7 +11,7 @@ def main():
 
     if(check): 
         TOLLK = 1e-12
-        yy = np.linspace(0,0.99,50)
+        yy = np.linspace(0,1,50)
 
         adaptive_deg = AdaptiveDegradation(ins,dist,SAMPLES,outstring,plot,TOLLK)
         
@@ -49,7 +49,8 @@ def main():
             ax2.set_ylabel(r'$\bar{w}(y)$', fontsize = 20)  
             ax2.plot(yy1,MEANSW,'^',color='#0099ff',markersize=8)
             ax2.plot(ww,AVGW_T,'k--',alpha=0.95)
-            plt.xlim(0,0.9)
+            ax2.set_ylim(0.5,3)
+            plt.xlim(0,0.99)
             plt.tight_layout()
             plt.show()
             plt.close()
@@ -61,7 +62,7 @@ def main():
             plt.xlabel(r'$y$', fontsize = 20)
             plt.ylabel(r'$\langle wk \rangle _y - \langle w \rangle _y \langle k \rangle _y$', fontsize = 20)
             plt.tight_layout()
-            plt.xlim(0,0.9)
+            plt.xlim(0,1)
             sns.despine()
 
             plt.show()

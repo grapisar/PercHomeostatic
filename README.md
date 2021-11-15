@@ -50,8 +50,8 @@ python3 FIG3.py datasets/mouse_kasthuri_directed.txt uniform 5000 out_fig3 plot
 
 Syntax and input parameters are the same of `FIG2.py`.
 
-To reproduce the results shown in Figure 4b run:
+To reproduce the results shown in Figure 4b and Figure 6a run:
 
 ``` python
-python3 FIG4.py datasets/RG_N5000_k4.txt gauss 5000 out_fig4 plot
+python3 FIG4.py datasets/RG_N5000_k4.txt uniform 5000 out_fig4 plot
 ```
