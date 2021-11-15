@@ -1,6 +1,6 @@
 # Percolation with homeostatic plasticity
 
-Code to reproduce the findings of the paper *"Percolation in networks equipped with local homeostatic plasticity"*.
+Code to reproduce the main findings of the paper *"Percolation in networks equipped with local homeostatic plasticity"*.
 
 ## Example of successive instances
 
