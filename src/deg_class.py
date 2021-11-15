@@ -235,4 +235,71 @@ class AdaptiveDegradation:
 
         return WGCC_T,WGCC
 
+    def degradation_adaptive_single(self,yy,G,ww,pw,kk,pk):
+
+        MEANSW = []
+        MEANSK = []
+        RHO = []
+        yy1 = []
+        dw = ww[1] - ww[0]
+        w_max = ww[-1]
+
+        with Bar('MC',max=len(yy)) as bar:
+            t1 = time.time()
+            for y in yy:
+                
+                G2 = G.copy()
+                
+                remove_thresh(G2,y,1)
+                
+                if not nx.is_empty(G2):
+                    w = []
+                    wk = []
+                    kn = []
+                    for e in G2.edges():
+                        w.append(G2[e[0]][e[1]]['weight'])
+                        wk.append(G2.in_degree(e[1]) * G2[e[0]][e[1]]['weight'])
+                        kn.append(G2.in_degree(e[1]))
+                    
+                    w_mean = np.mean(w)
+                    MEANSW.append(w_mean)
+                    
+                    wk_mean = np.mean(wk)
+                    kn_mean = np.mean(kn)
+                
+                    kin_list = [G2.in_degree(n) for n in G2.nodes()]
+                    k_mean = np.mean(kin_list)
+                    
+                    MEANSK.append(k_mean)
+                    
+                    RHO.append(wk_mean - w_mean*kn_mean)
+                    
+                    yy1.append(y)
+                bar.next()
+            Dt1 = time.time() - t1
+
+        pkex = PFK_EX(pk,kk)
+
+        t2 = time.time()
+        
+        k_0 = mean_k(pk)
+        kn_0 = np.sum([k*pkex[k-1] for k in range(1,max_in_deg(G) + 1)])
+
+        beta1, beta2 = beta1_2(pw,ww,dw,w_max)
+        F = primitive(pw,ww,dw)
+        GF = GEN(F,pkex)
+
+        AVGW_T = beta1 + beta2*( (F - GF) / (1 - F) )
+        AVGK_T = k_0*(1 - F)
+        RHO_T = beta2*(kn_0*GF - (F*(1-GF))/(1-F))
+        
+        Dt2 = time.time()-t2
+
+        print('MC Time:',Dt1)
+        print('Model Time:',Dt2)
+
+        return MEANSW,MEANSK,RHO,AVGW_T,AVGK_T,RHO_T,yy1
+
+
+
 
