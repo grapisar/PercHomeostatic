@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import random
 from numpy.polynomial.polynomial import polyval, polyval2d, polyder
 from numpy import linalg as LA
 
