@@ -103,6 +103,25 @@ def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,alpha):
 					del out[-1]
 			
 	return np.array(out)
+
+def PFK_NOAD(pk0,f,pw0,ww,dw,TOLLK):
+	out = []
+	a = integ(pw0*np.heaviside(ww-f,1),dw)
+	for k in range(0,len(pk0)):
+		s = 0
+		for j in range(k,len(pk0)):			
+			s += binom(j,k)*(a**k)*((1-a)**(j-k))*pk0[j]
+			
+		out.append(s)
+	if(len(out) > 1):
+		while True:
+			a = np.array(out[-1])
+			if(a > TOLLK):
+				break
+			else:
+				del out[-1]
+	
+	return np.array(out)
 	
 	
 def PFK_EX(pfk,kk):
@@ -112,7 +131,7 @@ def PFK_EX(pfk,kk):
 	out = np.array(out)
 	return out/np.sum(out)
 	
-def PFK_IN(kpred,wpred,f,ww,dw,kk):
+def PFK_OUT(kpred,wpred,f,ww,dw,kk):
 	out = []
 	a = integ(wpred*np.heaviside(ww-f,1),dw)
 	for k in kk:
