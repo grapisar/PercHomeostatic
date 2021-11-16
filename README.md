@@ -74,4 +74,4 @@ To reproduce the results shown in Figure 5a and Figure 5b run:
 python3 FIG5.py datasets/RG_N400_k10.txt uniform 3000 out_fig5 plot
 ```
 
-Note that `RG_N5000_k4.txt` has the same topology of the network used in Figure 5 in the paper, but the size is 400 nodes instead of 1000. Furthermore the default number of instances of the Montecarlo simulation are 25 instead of 200.
+Note that `RG_N5000_k4.txt` has the same topology of the network used in Figure 5 in the paper, but the size is 400 nodes instead of 1000. Furthermore the default number of instances of the Montecarlo simulation in the code is set 25 instead of 200.
