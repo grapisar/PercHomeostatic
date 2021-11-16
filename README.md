@@ -2,6 +2,13 @@
 
 Code to reproduce the main findings of the paper *"Percolation in networks equipped with local homeostatic plasticity"*.
 
+The code uses the libraries `networkx` and `seaborn`, which can be installed by running
+``` bash
+pip install networkx
+```
+``` bash
+pip install seaborn
+```
 ## Example of successive instances
 
 `FIG2.py` runs 3 successive instances of the damage-response process on a given directed network. 
