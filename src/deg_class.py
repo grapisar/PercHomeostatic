@@ -4,6 +4,7 @@ from gwcc_conf_func import *
 import numpy as np
 from progress.bar import Bar
 import time
+from numpy import linalg as LA
 
 class AdaptiveDegradation:
     def __init__(self,ins,dist,SAMPLES,outstring,plot,TOLLK):
@@ -72,7 +73,7 @@ class AdaptiveDegradation:
         PW_noad_T = []
         WW_noad = []
 
-        with Bar('No Adaptive',max=len(yy)) as bar:
+        with Bar('NO ADAPTIVE',max=len(yy)) as bar:
             for y in yy:
                 pw = pw*np.heaviside(ww-y,1)
                 pw = norm(pw,dw)
@@ -126,7 +127,7 @@ class AdaptiveDegradation:
         PW_ad_T = []
         WW_ad = []        
 
-        with Bar('Adaptive',max=len(yy)) as bar:
+        with Bar('ADAPTIVE',max=len(yy)) as bar:
             for y in yy:
                 wkpred = pwk
                 kpred = pk
@@ -299,6 +300,157 @@ class AdaptiveDegradation:
         print('Model Time:',Dt2)
 
         return MEANSW,MEANSK,RHO,AVGW_T,AVGK_T,RHO_T,yy1
+
+    
+    def degradation_single_maxeig(self,M,yy,G,ww,pw,kk,pk):
+
+        L_max_resp = []
+        L_max_noresp = []
+        dw = ww[1] - ww[0]
+        w_max = ww[-1]
+
+        with Bar('MC, Single',max=len(yy)) as bar:
+            t1 = time.time()
+            for y in yy:
+                lambdas_noresp = []
+                lambdas_resp = []
+
+                for i in range(M):
+                    G1 = G.copy()
+                    assign_weights(G1,self.weight_distribution_type)
+                
+                    GG1 = G1.copy()
+                    remove_thresh(GG1,y,1)
+                    lmax = np.real(max(LA.eigvals(nx.to_numpy_matrix(GG1))))
+                    lambdas_resp.append(lmax)
+
+                    GG2 = G1.copy()
+                    remove_thresh(GG2,y,0)
+                    lmax = np.real(max(LA.eigvals(nx.to_numpy_matrix(GG2))))
+                    lambdas_noresp.append(lmax)
+
+                L_max_noresp.append(lambdas_noresp)
+                L_max_resp.append(lambdas_resp)
+                bar.next()
+
+            L_max_resp = np.array(L_max_resp)
+            L_max_noresp = np.array(L_max_noresp)
+            Dt1 = time.time() - t1
+
+        t2 = time.time()
+
+        pkex = PFK_EX(pk,kk)
+        F = primitive(pw,ww,dw)
+        beta1, beta2 = beta1_2(pw,ww,dw,w_max)
+        GF = GEN(F,pkex)
+        k_0 = mean_k(pk)
+
+
+        AVGW_T = beta1 + beta2*( (F - GF) / (1 - F) )
+        AVGK_T = k_0*(1 - F)
+        AVG_S_resp = AVGW_T*AVGK_T
+        AVG_S_noresp = beta1*AVGK_T
+
+        Dt2 = time.time() - t2
+
+        print('MC Time, Single:',Dt1)
+        print('Model Time, Single:',Dt2)
+
+        return L_max_resp,L_max_noresp,AVG_S_resp,AVG_S_noresp
+
+
+    def degradation_multi_maxeig(self,M,yy,G,pwk,ww,pw,kk,pk,TOLLK):
+
+        dw = ww[1] - ww[0]
+        w_max = ww[-1]
+        MEANSS_T = []
+        meank = mean_k(pk)
+
+        t1 = time.time()
+        
+        F = primitive(pw,ww,dw)
+        beta1, beta2 = beta1_2(pw,ww,dw,w_max)
+        AVGK_T = meank*(1 - F)
+        AVG_S_noresp = beta1*AVGK_T
+        
+        with Bar('ADAPTIVE - MODEL, Multi',max=len(yy)) as bar:
+            for y in yy:
+                wkpred = pwk
+                kpred = pk
+                wpred = pw
+
+                pwk_ = PFKEX(wkpred,y,kk,ww,dw,kpred,TOLLK,1)
+                        
+                kk = np.arange(0,len(pwk_)+1,1)
+
+                pkex = []
+                for k in range(0,len(pwk_)):
+                    pkex.append(integ(pwk_[k],dw))
+                meank = np.sum(pkex)
+                    
+                pk = [0]*len(kk)
+                for k in range(1,len(kk)): 
+                    pk[k] = pkex[k-1]/k
+                pk[0] = 1 - np.sum(pk)
+                    
+                pwk = pwk_/meank
+                pkex = pkex/meank
+                    
+                pw = 0
+                for q in pwk:
+                    pw += q
+                    
+                w_m = integ(pw*ww,dw)
+
+                MEANSS_T.append(w_m*meank)
+                bar.next()
+
+        Dt1 = time.time() - t1
+
+        L_resp = []
+        L_noresp = []
+
+        t2 = time.time()
+        with Bar('MC, Multi',max=len(yy)) as bar:
+            for i in range(0,M):
+                G_resp = G.copy()
+                G_noresp = G.copy()
+
+                assign_weights(G_resp,self.weight_distribution_type)
+                assign_weights(G_noresp,self.weight_distribution_type)
+
+                l_resp = []
+                l_noresp = []
+
+                for f in yy:     
+                    remove_thresh(G_resp,f,1)
+                    lmax = np.real(max(LA.eigvals(nx.to_numpy_matrix(G_resp)))) 
+                    l_resp.append(lmax)
+
+                    remove_thresh(G_noresp,f,0)
+                    lmax = np.real(max(LA.eigvals(nx.to_numpy_matrix(G_noresp)))) 
+                    l_noresp.append(lmax)
+
+                L_resp.append(l_resp)
+                L_noresp.append(l_noresp)
+                bar.next()
+    
+        L_resp = np.array(L_resp)
+        L_noresp = np.array(L_noresp)
+        Dt2 = time.time() - t2 
+
+        print('Model Time, Multi:',Dt1) 
+        print('MC Time, Multi:',Dt2)
+          
+
+        return L_noresp,L_resp,AVG_S_noresp,MEANSS_T
+
+
+
+
+                
+       
+
 
 
 
