@@ -4,6 +4,41 @@ import numpy as np
 from deg_class import AdaptiveDegradation
 from get_input_params import input_params
 
+def plotFIG2(ins):
+        
+        instring = ins + ".npy"
+        data = np.load(instring,allow_pickle=True)
+
+        PW_noad_T = data[0]
+        WW_noad = data[1]
+        PW_ad_T = data[2]
+        WW_ad = data[3]
+        yy = data[4]
+        ww = data[5]
+
+
+        for i in range(0,len(PW_noad_T)):
+            plt.figure()
+            plt.hist(WW_noad[i],bins=int(np.sqrt(len(WW_noad[i]))),density=True)
+            plt.title(r'$y = %.3f$ No Response' % yy[i])
+            plt.xlabel(r'$x$')
+            plt.ylabel(r'$w(x)$')
+            plt.plot(ww,PW_noad_T[i])
+            plt.show()
+            plt.close()
+
+        for i in range(0,len(PW_ad_T)):
+            plt.figure()
+            plt.hist(WW_ad[i],bins=int(np.sqrt(len(WW_ad[i]))),density=True)
+            plt.title(r'$y = %.3f$ Homeostatic Response' % yy[i])
+            plt.xlabel(r'$x$')
+            plt.ylabel(r'$w(x)$')
+            plt.plot(ww,PW_ad_T[i])
+            plt.show()
+            plt.close()
+
+
+
 def main():
 
     ins,dist,SAMPLES,outstring,plot,check = input_params()   
@@ -39,25 +74,8 @@ def main():
 
 
         if plot == 'plot' :
-            for i in range(0,len(PW_noad_T)):
-                plt.figure()
-                plt.hist(WW_noad[i],bins=int(np.sqrt(len(WW_noad[i]))),density=True)
-                plt.title(r'$y = %.3f$ No Response' % yy[i])
-                plt.xlabel(r'$x$')
-                plt.ylabel(r'$w(x)$')
-                plt.plot(ww,PW_noad_T[i])
-                plt.show()
-                plt.close()
+            plotFIG2(outstring)
 
-            for i in range(0,len(PW_ad_T)):
-                plt.figure()
-                plt.hist(WW_ad[i],bins=int(np.sqrt(len(WW_ad[i]))),density=True)
-                plt.title(r'$y = %.3f$ Homeostatic Response' % yy[i])
-                plt.xlabel(r'$x$')
-                plt.ylabel(r'$w(x)$')
-                plt.plot(ww,PW_ad_T[i])
-                plt.show()
-                plt.close()
 
 if __name__ == "__main__":
     main()
