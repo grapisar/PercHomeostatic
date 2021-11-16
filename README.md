@@ -64,7 +64,7 @@ python3 FIG4.py datasets/RG_N5000_k4.txt uniform 5000 out_fig4 plot
 ```
 ## Evolution of the leading eigenvalue
 
-`FIG5.py` runs 50 single instances and 50 successive instances of the damage-response process and returns the leading eigenvalue of the adjacency matrix. In case of single instances the model provides and analytical approximation.
+`FIG5.py` runs 50 single instances and 50 successive instances of the damage-response process and returns the leading eigenvalue of the adjacency matrix. In case of single instances the model provides an analytical approximation.
 
 Syntax and input parameters are the same of `FIG2.py`.
 
