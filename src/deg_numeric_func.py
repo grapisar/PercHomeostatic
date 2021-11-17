@@ -38,25 +38,6 @@ def w_kin_corr(G):
 	C = np.corrcoef(w_in,k_in)
 	return C[0][1]
 
-# def adapt_after_removal(G,e):
-# 	w = G[e[0]][e[1]]['weight']
-# 	G.remove_edge(e[0],e[1])
-# 	n = G.out_degree(e[0])
-# 	if(n > 0):
-# 		e_n = G.out_edges(e[0])
-# 		for ee in e_n:
-# 			G[ee[0]][ee[1]]['weight'] += w/n
-			
-# def adapt_after_removal_scale(G,e,a):
-# 	w = G[e[0]][e[1]]['weight']
-# 	s = out_strength(G,e[0])
-# 	G.remove_edge(e[0],e[1])
-# 	n = G.out_degree(e[0])
-# 	if(n > 0):
-# 		e_n = G.out_edges(e[0])
-# 		for ee in e_n:
-# 			G[ee[0]][ee[1]]['weight'] *= (s/(s- a*w))
-
 def max_out_deg(G):
 	deg = [G.out_degree(n) for n in G.nodes]
 	return max(deg)
