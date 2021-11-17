@@ -41,7 +41,7 @@ Note that `RG_N5000_k4.txt` has the same topology of the network used in Figure 
 
 ## Evolution of the Weak Largest Connected Component
 
-`FIG3.py` runs 20 successive instances of both the damage process only and the damage-response process on a given directed network and returns the evolution of the weak largest connected component for the two cases. 
+`FIG3.py` runs 20 successive instances of both the damage process only and the damage-response process on a given directed network, and returns the evolution of the weak largest connected component for the two cases. 
 
 Syntax and input parameters are the same of `FIG2.py`.
 
@@ -53,7 +53,7 @@ python3 FIG3.py datasets/mouse_kasthuri_directed.txt uniform 5000 out_fig3 plot
 
 ## Analytical prediction of average weight, average degree and weight-degree correlation
 
-`FIG4.py` runs 50 single instances of the damage-response process at increasing threshold values and returns the values of average weight, average degree and weight degree covariance. Those quantities can be evluated analitically for a single instance of the process. 
+`FIG4.py` runs 50 single instances of the damage-response process at increasing threshold values and returns the values of average weight, average degree and weight degree covariance. Those quantities can be evaluated analitically for a single instance of the process. 
 
 Syntax and input parameters are the same of `FIG2.py`.
 
@@ -74,4 +74,4 @@ To reproduce the results shown in Figure 5a and Figure 5b run:
 python3 FIG5.py datasets/RG_N400_k10.txt uniform 3000 out_fig5 plot
 ```
 
-Note that `RG_N5000_k4.txt` has the same topology of the network used in Figure 5 in the paper, but the size is 400 nodes instead of 1000. Furthermore the default number of instances of the Montecarlo simulation in the code is set 25 instead of 200.
+Note that `RG_N400_k10.txt` has the same topology of the network used in Figure 5 in the paper, but the size is 400 nodes instead of 1000. Furthermore, the default number of instances of the Montecarlo simulation is set 25 instead of 200.
