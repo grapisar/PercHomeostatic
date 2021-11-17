@@ -1,6 +1,6 @@
 # Percolation with homeostatic plasticity
 
-Code to reproduce the main findings of the paper *"Percolation in networks equipped with local homeostatic plasticity"*.
+Code to reproduce the main findings of the paper *"Percolation in networks with local homeostatic plasticity"*.
 
 The code uses the libraries `networkx` and `seaborn`, which can be installed by running the following instraction in the terminal:
 ``` bash
