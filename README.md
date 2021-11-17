@@ -23,11 +23,11 @@ where:
 
 * `path_edgelist`:  `\path\to\edgelist`. 
 
-* `weight_distribution`: assigns a weight to each link extracted from a weight distribution. The options availables are `uniform` and `gauss`.
+* `weight_distribution`: type of weight distribution for the edges. The options availables are `uniform` and `gauss`.
 
 * `samples`: number of subdivision for the x-axis.
 
-* `outstring`: string for the output file. The output file is always generated and stored locally with the `.npy` format.
+* `outstring`: string for the output file. The output file is always generated and stored locally as a `.npy` file.
 
 * `Plot`: `plot` for visualizing the result of the simulation, `noplot` otherwise. 
 
