@@ -26,7 +26,7 @@ def gaussian(x, mu, sig):
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
     
 	
-def conv_norm(a,b,n,df):		#convolution of a*b**n
+def conv_norm(a,b,n,df):	
 	fa = fft(a)
 	fb = (fft(b)*df)**n
 	return np.real(ifft(fa*fb))
