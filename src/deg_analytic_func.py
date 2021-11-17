@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.special import factorial, binom
+from scipy.special import binom
 from numpy.fft import fft,ifft
 
 def integ(arr,df):
@@ -36,43 +36,11 @@ def mean_k(pk):
 	for k in range(0,len(pk)):
 		s += pk[k]*k
 	return s
-	
-def mean_kex(pkex):
-	s = 0
-	for k in range(0,len(pkex)):
-		s += pkex[k]*(k+1)
-	return s	
-	
-def std_k(pk):
-	ss = 0
-	for k in range(0,len(pk)):
-		ss += pk[k]*k*k
-	return np.sqrt(ss - (mean_k(pk))**2 )
-	
-def mean_w(pw,ww,dw):
-	return integ(pw*ww,dw)
-	
-def std_w(pw,ww,dw):
-	return np.sqrt( integ(pw*ww*ww,dw) - (mean_w(pw,ww,dw))**2 )
-
-def norm_wk(pwk,ww,kk,dw):
-	s = 0
-	for k in range(1,len(kk)):
-		s += pwk[k-1]
-	n = integ(s,dw)
-	return pwk/n
-	
-def exp_wk(pwk,ww,kk,dw):
-	s = 0
-	for k in range(0,len(kk)):
-		s += pwk[k-1]*k
-	return integ(s*ww,dw)	
-
+		
 def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi):
 	out = []
 	check = 0
 	for k in range(1,len(kpred)):
-		#print(k)
 		s = 0
 		for j in range(k,len(kk)):
 			a_k = norm(wkpred[j-1],dw)
@@ -83,7 +51,6 @@ def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi):
 
 			conv_ = conv_norm(wpred_up,wpredk_down,(j-k),dw)
 
-			#PREVENTS DIVERGENCES DUE TO NUMERICAL INSTABILITIES
 			if(np.sum(conv_ > 1e6) != 0):
 				conv_[conv_ > 1e6] = 0
 			if(np.sum(conv_ < 0) != 0):
@@ -109,7 +76,6 @@ def PFKEX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi):
 def PFKEX_APPROX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,dkmax):
 	out = []
 	for k in range(1,len(kpred)):
-#		print(k)
 		s = 0
 		km =  len(kk)
 		if(k < len(kk) - dkmax):
@@ -123,7 +89,6 @@ def PFKEX_APPROX(wkpred,f,kk,ww,dw,kpred,TOLLK,multi,dkmax):
 
 			conv_ = conv_norm(wpred_up,wpredk_down,(j-k),dw)
 
-			#PREVENTS DIVERGENCES DUE TO NUMERICAL INSTABILITIES
 			if(np.sum(conv_ > 1e6) != 0):
 				conv_[conv_ > 1e6] = 0
 			if(np.sum(conv_ < 0) != 0):

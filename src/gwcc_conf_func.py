@@ -1,24 +1,14 @@
 import numpy as np
-from numpy.polynomial.polynomial import polyval, polyval2d, polyder
+from numpy.polynomial.polynomial import polyval2d, polyder
 from numpy import linalg as LA
 
 def max_out_deg(G):
-	max = 0
-	for n in G.nodes():
-		d = G.out_degree(n)
-		if(d > max):
-			max = d
-	return max
+	deg = [G.out_degree(n) for n in G.nodes]
+	return max(deg)
 
 def max_in_deg(G):
-	max = 0
-	for n in G.nodes():
-		d = G.in_degree(n)
-		if(d > max):
-			max = d
-	return max	
-
-
+	deg = [G.in_degree(n) for n in G.nodes]
+	return max(deg)
 
 def multi_deg(G):
 	M = max(max_out_deg(G),max_in_deg(G))
@@ -33,7 +23,6 @@ def multi_deg(G):
 	U = U / np.sum(U)
 
 	return U
-
 
 def polyder2d(U,d):
 	dU = np.zeros(shape=(len(U[0]),len(U[:,0])))
@@ -60,7 +49,6 @@ def fixed_point_directed(U):
 	
 	F_tol = 1e-5
 	
-#	xi = 1
 	Wi = 0.5
 	Wo = 0.5
 	
@@ -78,9 +66,6 @@ def fixed_point_directed(U):
 		
 		Wo = Wo_new
 		Wi = Wi_new
-		
-		#if(k%10 == 0):
-		#	print(nrm)
 			
 	W = polyval2d(Wo,Wi,U)
 	
