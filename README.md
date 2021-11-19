@@ -27,7 +27,7 @@ where:
 
 * `samples`: number of subdivision for the x-axis.
 
-* `outstring`: string for the output file. The output file is always generated and stored locally as a `.npy` file.
+* `outstring`: string for the output file. An output file is always generated and stored locally as a `.npy` file.
 
 * `Plot`: `plot` for visualizing the result of the simulation, `noplot` otherwise. 
 
